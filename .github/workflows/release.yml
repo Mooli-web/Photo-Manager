@@ -1,0 +1,53 @@
+name: Build Windows release
+on:
+  workflow_dispatch:
+  push:
+    tags: ["v*"]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+      - run: pip install -r requirements-dev.txt
+      - run: pytest
+      - run: pyinstaller --noconfirm PhotoManager.spec
+      - name: Build installer
+        shell: pwsh
+        run: '& "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer.iss'
+      - name: Create portable ZIP
+        shell: pwsh
+        run: Compress-Archive -Path dist/PhotoManager.exe -DestinationPath PhotoManager-${{ github.ref_name }}-windows-x64.zip
+      - name: Create checksums
+        shell: pwsh
+        run: |
+          $files = @(
+            "PhotoManager-${{ github.ref_name }}-windows-x64.zip",
+            "installer-output/PhotoManager-Setup-1.0.0-x64.exe"
+          )
+          $lines = foreach ($file in $files) {
+            $hash = (Get-FileHash $file -Algorithm SHA256).Hash.ToLower()
+            "$hash  $file"
+          }
+          $lines | Out-File checksum-sha256.txt -Encoding ascii
+      - name: Upload workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: PhotoManager-Windows-x64
+          path: |
+            PhotoManager-${{ github.ref_name }}-windows-x64.zip
+            installer-output/PhotoManager-Setup-1.0.0-x64.exe
+            checksum-sha256.txt
+      - uses: softprops/action-gh-release@v2
+        if: startsWith(github.ref, 'refs/tags/')
+        with:
+          files: |
+            PhotoManager-${{ github.ref_name }}-windows-x64.zip
+            installer-output/PhotoManager-Setup-1.0.0-x64.exe
+            checksum-sha256.txt
+          generate_release_notes: true

@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mooli-photo-manager"
+version = "1.0.0"
+description = "Offline, bilingual and non-destructive photo archive manager"
+readme = "README.md"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+authors = [{name = "Mooli-web"}]
+dependencies = ["PyQt6>=6.7,<7", "Pillow>=10.3,<12"]
+keywords = ["photo-manager", "photography", "archive", "tags", "pyqt6"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: Microsoft :: Windows :: Windows 10",
+  "Operating System :: Microsoft :: Windows :: Windows 11",
+  "Programming Language :: Python :: 3",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "ruff>=0.6", "pyinstaller>=6.10"]
+
+[project.gui-scripts]
+photo-manager = "photomanager.app:main"
+
+[tool.setuptools.packages.find]
+include = ["photomanager*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+[tool.ruff]
+line-length = 120
+target-version = "py311"
