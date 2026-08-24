@@ -13,6 +13,7 @@ public interface IPhotoCatalog
     Task UpsertBatchAsync(IReadOnlyCollection<PhotoDraft> photos, CancellationToken cancellationToken = default);
     Task SetFullHashAsync(long photoId, string fullHash, CancellationToken cancellationToken = default);
     Task<IReadOnlyList<string>> GetTagsAsync(long photoId, CancellationToken cancellationToken = default);
+    Task<IReadOnlyList<string>> SuggestTagsAsync(string search, int limit = 30, CancellationToken cancellationToken = default);
     Task AddTagsAsync(IReadOnlyCollection<long> photoIds, IReadOnlyCollection<string> tags, CancellationToken cancellationToken = default);
     Task RemoveTagAsync(IReadOnlyCollection<long> photoIds, string tag, CancellationToken cancellationToken = default);
     Task SetRatingAsync(IReadOnlyCollection<long> photoIds, int rating, CancellationToken cancellationToken = default);

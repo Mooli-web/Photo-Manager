@@ -27,6 +27,8 @@ public sealed class CatalogTests : IAsyncLifetime
         Assert.Single(photos);
         await _catalog.AddTagsAsync([photos[0].Id], ["Nature", "Nature", "طبیعت"]);
         Assert.Equal(["Nature", "طبیعت"], await _catalog.GetTagsAsync(photos[0].Id));
+        Assert.Contains("Nature", await _catalog.SuggestTagsAsync("Nat"));
+        Assert.Contains("طبیعت", await _catalog.SuggestTagsAsync("طبی"));
         Assert.Equal(1, await _catalog.CountAsync(new(Tag: "nature")));
     }
 

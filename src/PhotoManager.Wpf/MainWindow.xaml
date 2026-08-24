@@ -2,18 +2,16 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="{Binding L.Title}" Width="1280" Height="800" MinWidth="980" MinHeight="640"
-        FlowDirection="{Binding L.Flow}" WindowStartupLocation="CenterScreen">
+        FlowDirection="{Binding L.Flow}" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
   <DockPanel LastChildFill="True" Background="{StaticResource BackgroundBrush}">
     <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}" Padding="10" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,0,1">
-      <Grid>
-        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
-          <Button Content="{Binding L.AddFolder}" Command="{Binding ScanCommand}"/>
-          <Button Content="{Binding L.Cancel}" Command="{Binding CancelCommand}"/>
-          <Button Content="{Binding L.CheckMissing}" Command="{Binding CheckMissingCommand}" MinWidth="145"/>
-          <Button Content="{Binding L.Backup}" Command="{Binding BackupCommand}" MinWidth="112"/>
-          <Button Content="{Binding L.Language}" Command="{Binding ToggleLanguageCommand}" MinWidth="86"/>
-        </WrapPanel>
-      </Grid>
+      <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+        <Button Content="{Binding L.AddFolder}" Command="{Binding ScanCommand}"/>
+        <Button Content="{Binding L.Cancel}" Command="{Binding CancelCommand}"/>
+        <Button Content="{Binding L.CheckMissing}" Command="{Binding CheckMissingCommand}" MinWidth="145"/>
+        <Button Content="{Binding L.Backup}" Command="{Binding BackupCommand}" MinWidth="112"/>
+        <Button Content="{Binding L.Language}" Command="{Binding ToggleLanguageCommand}" MinWidth="86"/>
+      </WrapPanel>
     </Border>
 
     <Border DockPanel.Dock="Top" Background="{StaticResource BackgroundBrush}" Padding="12,10" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,0,1">
@@ -37,7 +35,11 @@
 
         <StackPanel Grid.Column="2" Margin="4,0">
           <TextBlock Text="{Binding L.Rating}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="2,0,2,4"/>
-          <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding MinimumRating}" ToolTip="{Binding L.Rating}"/>
+          <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding MinimumRating}" ToolTip="{Binding L.Rating}" FlowDirection="LeftToRight">
+            <ComboBox.ItemTemplate>
+              <DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource InputTextBrush}" MinWidth="42" TextAlignment="Center"/></DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
         </StackPanel>
 
         <Border Grid.Column="3" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="8" Margin="4,18,4,0" Padding="10,6">
@@ -63,7 +65,8 @@
     <Grid Background="{StaticResource BackgroundBrush}">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*" MinWidth="560"/>
-        <ColumnDefinition Width="350"/>
+        <ColumnDefinition Width="7"/>
+        <ColumnDefinition Width="370" MinWidth="300" MaxWidth="620"/>
       </Grid.ColumnDefinitions>
 
       <DockPanel Grid.Column="0" Margin="12,12,8,12" LastChildFill="True">
@@ -103,7 +106,10 @@
         </ListView>
       </DockPanel>
 
-      <Border Grid.Column="1" Background="{StaticResource SurfaceBrush}" Padding="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1,0,0,0">
+      <GridSplitter Grid.Column="1" Width="7" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                    Background="{StaticResource StrokeBrush}" ShowsPreview="True" ResizeBehavior="PreviousAndNext"/>
+
+      <Border Grid.Column="2" Background="{StaticResource SurfaceBrush}" Padding="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1,0,0,0">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
           <StackPanel>
             <Border Height="230" Background="#111722" BorderBrush="#303848" BorderThickness="1" CornerRadius="10" Margin="0,0,0,12">
@@ -113,17 +119,63 @@
             <TextBlock Text="{Binding SelectedPhoto.Path}" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,14" FlowDirection="LeftToRight" TextAlignment="Left"/>
             <TextBlock Text="{Binding L.SelectPhoto}" Foreground="{StaticResource SubtleBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
 
-            <TextBlock Text="{Binding L.TagInput}" Margin="0,4" Foreground="{StaticResource MutedBrush}"/>
-            <TextBox Text="{Binding TagInput, UpdateSourceTrigger=PropertyChanged}"/>
+            <TextBlock Text="{Binding L.CurrentTags}" Margin="0,4" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/>
+            <ItemsControl ItemsSource="{Binding SelectedTags}" Margin="0,5,0,10">
+              <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+              </ItemsControl.ItemsPanel>
+              <ItemsControl.ItemTemplate>
+                <DataTemplate>
+                  <Border Background="{StaticResource CardSelectedBrush}" BorderBrush="{StaticResource AccentBrush}" BorderThickness="1" CornerRadius="14" Padding="9,4" Margin="3">
+                    <DockPanel LastChildFill="False">
+                      <TextBlock Text="{Binding}" VerticalAlignment="Center" Foreground="{StaticResource TextBrush}"/>
+                      <Button Content="×" Style="{StaticResource TagRemoveButtonStyle}"
+                              Command="{Binding DataContext.RemoveSelectedTagCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                              CommandParameter="{Binding}"/>
+                    </DockPanel>
+                  </Border>
+                </DataTemplate>
+              </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <TextBlock Text="{Binding L.TagInput}" Margin="0,4" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/>
+            <TextBox Text="{Binding TagInput, UpdateSourceTrigger=PropertyChanged}">
+              <TextBox.InputBindings>
+                <KeyBinding Key="Return" Command="{Binding AddTagsCommand}"/>
+              </TextBox.InputBindings>
+            </TextBox>
+            <TextBlock Text="{Binding L.TagInputHelp}" Foreground="{StaticResource SubtleBrush}" TextWrapping="Wrap" FontSize="12" Margin="0,6,0,0"/>
             <WrapPanel Margin="0,7,0,0">
               <Button Content="{Binding L.AddTags}" Command="{Binding AddTagsCommand}" MinWidth="105"/>
               <Button Content="{Binding L.RemoveTag}" Command="{Binding RemoveTagCommand}" MinWidth="105"/>
             </WrapPanel>
 
-            <TextBlock Text="{Binding L.Rating}" Margin="0,12,0,4" Foreground="{StaticResource MutedBrush}"/>
-            <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding SelectedRating}"/>
+            <TextBlock Text="{Binding L.PreviousTags}" Margin="0,14,0,5" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/>
+            <Border Background="{StaticResource CardBrush}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="8" Padding="6" MaxHeight="128">
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <ItemsControl ItemsSource="{Binding SuggestedTags}">
+                  <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate><WrapPanel/></ItemsPanelTemplate>
+                  </ItemsControl.ItemsPanel>
+                  <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                      <Button Content="{Binding}" Style="{StaticResource TagSuggestionButtonStyle}"
+                              Command="{Binding DataContext.AddSuggestedTagCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                              CommandParameter="{Binding}"/>
+                    </DataTemplate>
+                  </ItemsControl.ItemTemplate>
+                </ItemsControl>
+              </ScrollViewer>
+            </Border>
 
-            <TextBlock Text="{Binding L.Notes}" Margin="0,14,0,4" Foreground="{StaticResource MutedBrush}"/>
+            <TextBlock Text="{Binding L.Rating}" Margin="0,14,0,4" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/>
+            <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding SelectedRating}" FlowDirection="LeftToRight">
+              <ComboBox.ItemTemplate>
+                <DataTemplate><TextBlock Text="{Binding}" Foreground="{StaticResource InputTextBrush}" MinWidth="42" TextAlignment="Center"/></DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <TextBlock Text="{Binding L.Notes}" Margin="0,14,0,4" Foreground="{StaticResource MutedBrush}" FontWeight="SemiBold"/>
             <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="120" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
             <Button Content="{Binding L.SaveNotes}" Command="{Binding SaveNotesCommand}" Margin="0,9,0,0"/>
           </StackPanel>

@@ -19,9 +19,12 @@ public sealed class Localizer : ObservableObject
     public string Added => T("ثبت‌شده", "Added");
     public string Failed => T("خطا", "Failed");
     public string LoadMore => T("نمایش موارد بیشتر", "Load more");
-    public string AddTags => T("افزودن تگ", "Add tags");
+    public string AddTags => T("افزودن تگ", "Add tag");
     public string RemoveTag => T("حذف تگ", "Remove tag");
-    public string TagInput => T("تگ‌ها را با ویرگول جدا کنید", "Separate tags with commas");
+    public string TagInput => T("تگ را بنویسید و Enter بزنید", "Type a tag and press Enter");
+    public string CurrentTags => T("تگ‌های این عکس", "Current tags");
+    public string PreviousTags => T("تگ‌های قبلی", "Existing tags");
+    public string TagInputHelp => T("هر بار یک تگ اضافه می‌شود. با کلیک روی تگ‌های قبلی هم می‌توانید همان تگ را اضافه کنید.", "Add one tag at a time. Click an existing tag to reuse it.");
     public string SaveNotes => T("ذخیره یادداشت", "Save notes");
     public string Notes => T("یادداشت", "Notes");
     public string Backup => T("پشتیبان‌گیری", "Backup catalog");

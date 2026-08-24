@@ -1,6 +1,18 @@
 # Changelog
 
-## [2.0.0-beta.3] - Unreleased
+## [2.0.0-beta.4] - Unreleased
+
+### Added
+- Added a splitter between the photo list and the details/tag panel so the panes can be resized by the user.
+- Added visible current-tag chips for the selected photo.
+- Added tag suggestions from previously used tags, filtered live by the text being typed.
+- Added one-key tag entry: typing a tag and pressing Enter immediately adds it to the selected photo(s), refreshes the visible tag list and clears the input.
+- Added clickable previous-tag suggestions to reuse existing tags and reduce typos.
+
+### Fixed
+- Improved rating ComboBox contrast so the rating values remain readable against the dark theme.
+
+## [2.0.0-beta.3]
 
 ### Changed
 - Improved the WPF dark theme contrast so list items, paths, counters and side-panel controls stay readable.

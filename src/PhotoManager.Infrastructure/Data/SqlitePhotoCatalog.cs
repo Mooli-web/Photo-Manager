@@ -138,6 +138,34 @@ public sealed class SqlitePhotoCatalog(string databasePath) : IPhotoCatalog
         while (await reader.ReadAsync(cancellationToken)) result.Add(reader.GetString(0)); return result;
     }
 
+    public async Task<IReadOnlyList<string>> SuggestTagsAsync(string search, int limit = 30, CancellationToken cancellationToken = default)
+    {
+        limit = Math.Clamp(limit, 1, 100);
+        search = search.Trim();
+        await using var connection = await OpenAsync(cancellationToken);
+        var command = connection.CreateCommand();
+        if (search.Length == 0)
+        {
+            command.CommandText = "SELECT name FROM tags ORDER BY name LIMIT $limit;";
+        }
+        else
+        {
+            command.CommandText = """
+                SELECT name FROM tags
+                WHERE name LIKE $prefix ESCAPE '\' OR name LIKE $contains ESCAPE '\'
+                ORDER BY CASE WHEN name LIKE $prefix ESCAPE '\' THEN 0 ELSE 1 END, name
+                LIMIT $limit;
+                """;
+            command.Parameters.AddWithValue("$prefix", $"{EscapeLike(search)}%");
+            command.Parameters.AddWithValue("$contains", $"%{EscapeLike(search)}%");
+        }
+        command.Parameters.AddWithValue("$limit", limit);
+        var result = new List<string>();
+        await using var reader = await command.ExecuteReaderAsync(cancellationToken);
+        while (await reader.ReadAsync(cancellationToken)) result.Add(reader.GetString(0));
+        return result;
+    }
+
     public async Task AddTagsAsync(IReadOnlyCollection<long> photoIds, IReadOnlyCollection<string> tags, CancellationToken cancellationToken = default)
     {
         var clean = tags.Select(x => x.Trim()).Where(x => x.Length > 0).Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
