@@ -77,8 +77,8 @@ End users need none of these tools.
 After tests pass on `main`:
 
 ```bash
-git tag v2.0.0-beta.1
-git push origin v2.0.0-beta.1
+git tag v2.0.0-beta.3
+git push origin v2.0.0-beta.3
 ```
 
 The release workflow tests, publishes x64/ARM64 self-contained executables, builds the x64 installer, calculates SHA-256 checksums, and creates a GitHub pre-release.

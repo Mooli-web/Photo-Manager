@@ -69,8 +69,8 @@ dotnet test tests/PhotoManager.Tests/PhotoManager.Tests.csproj -c Release
 ## انتشار نسخه آزمایشی
 
 ```bash
-git tag v2.0.0-beta.1
-git push origin v2.0.0-beta.1
+git tag v2.0.0-beta.3
+git push origin v2.0.0-beta.3
 ```
 
 GitHub Actions تست‌ها را اجرا می‌کند، خروجی‌های مستقل x64 و ARM64 و نصب‌کننده x64 را می‌سازد، checksum تولید می‌کند و یک Pre-release می‌سازد.

@@ -1,83 +1,131 @@
 <Window x:Class="PhotoManager.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="{Binding L.Title}" Width="1280" Height="800" MinWidth="900" MinHeight="600"
+        Title="{Binding L.Title}" Width="1280" Height="800" MinWidth="980" MinHeight="640"
         FlowDirection="{Binding L.Flow}" WindowStartupLocation="CenterScreen">
-  <DockPanel>
-    <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}" Padding="8">
-      <StackPanel Orientation="Horizontal">
-        <Button Content="{Binding L.AddFolder}" Command="{Binding ScanCommand}"/>
-        <Button Content="{Binding L.Cancel}" Command="{Binding CancelCommand}"/>
-        <Button Content="{Binding L.CheckMissing}" Command="{Binding CheckMissingCommand}"/>
-        <Button Content="{Binding L.Backup}" Command="{Binding BackupCommand}"/>
-        <Button Content="{Binding L.Language}" Command="{Binding ToggleLanguageCommand}"/>
-      </StackPanel>
-    </Border>
-
-    <Border DockPanel.Dock="Top" Padding="10,8">
+  <DockPanel LastChildFill="True" Background="{StaticResource BackgroundBrush}">
+    <Border DockPanel.Dock="Top" Background="{StaticResource SurfaceBrush}" Padding="10" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,0,1">
       <Grid>
-        <Grid.ColumnDefinitions><ColumnDefinition Width="3*"/><ColumnDefinition Width="2*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-        <TextBox Grid.Column="0" Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding L.Search}" Margin="3"/>
-        <TextBox Grid.Column="1" Text="{Binding TagFilter, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding L.TagFilter}" Margin="3"/>
-        <ComboBox Grid.Column="2" ItemsSource="{Binding Ratings}" SelectedItem="{Binding MinimumRating}" ToolTip="{Binding L.Rating}" MinWidth="90" Margin="3"/>
-        <TextBlock Grid.Column="3" Text="{Binding TotalCount, StringFormat={}{0:N0}}" VerticalAlignment="Center" Margin="12,0"/>
+        <WrapPanel HorizontalAlignment="Right" VerticalAlignment="Center">
+          <Button Content="{Binding L.AddFolder}" Command="{Binding ScanCommand}"/>
+          <Button Content="{Binding L.Cancel}" Command="{Binding CancelCommand}"/>
+          <Button Content="{Binding L.CheckMissing}" Command="{Binding CheckMissingCommand}" MinWidth="145"/>
+          <Button Content="{Binding L.Backup}" Command="{Binding BackupCommand}" MinWidth="112"/>
+          <Button Content="{Binding L.Language}" Command="{Binding ToggleLanguageCommand}" MinWidth="86"/>
+        </WrapPanel>
       </Grid>
     </Border>
 
-    <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceBrush}" Padding="9">
+    <Border DockPanel.Dock="Top" Background="{StaticResource BackgroundBrush}" Padding="12,10" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,0,0,1">
       <Grid>
-        <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/></Grid.ColumnDefinitions>
-        <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-        <ProgressBar Grid.Column="1" Height="7" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" VerticalAlignment="Center"/>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="3*"/>
+          <ColumnDefinition Width="2*"/>
+          <ColumnDefinition Width="150"/>
+          <ColumnDefinition Width="120"/>
+        </Grid.ColumnDefinitions>
+
+        <StackPanel Grid.Column="0" Margin="4,0">
+          <TextBlock Text="{Binding L.Search}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="2,0,2,4"/>
+          <TextBox Text="{Binding Search, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding L.Search}" FlowDirection="LeftToRight"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="1" Margin="4,0">
+          <TextBlock Text="{Binding L.TagFilter}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="2,0,2,4"/>
+          <TextBox Text="{Binding TagFilter, UpdateSourceTrigger=PropertyChanged}" ToolTip="{Binding L.TagFilter}"/>
+        </StackPanel>
+
+        <StackPanel Grid.Column="2" Margin="4,0">
+          <TextBlock Text="{Binding L.Rating}" Foreground="{StaticResource MutedBrush}" FontSize="12" Margin="2,0,2,4"/>
+          <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding MinimumRating}" ToolTip="{Binding L.Rating}"/>
+        </StackPanel>
+
+        <Border Grid.Column="3" Background="{StaticResource SurfaceBrush}" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1" CornerRadius="8" Margin="4,18,4,0" Padding="10,6">
+          <StackPanel HorizontalAlignment="Center">
+            <TextBlock Text="{Binding TotalCount, StringFormat={}{0:N0}}" FontSize="16" FontWeight="Bold" HorizontalAlignment="Center"/>
+            <TextBlock Text="{Binding L.Photos}" Foreground="{StaticResource MutedBrush}" FontSize="11" HorizontalAlignment="Center"/>
+          </StackPanel>
+        </Border>
       </Grid>
     </Border>
 
-    <Grid>
-      <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="330"/></Grid.ColumnDefinitions>
-      <DockPanel Grid.Column="0">
-        <Button DockPanel.Dock="Bottom" Content="{Binding L.LoadMore}" Command="{Binding LoadMoreCommand}" HorizontalAlignment="Center" Margin="8"/>
-        <ListView x:Name="PhotoList" ItemsSource="{Binding Photos}" SelectionMode="Extended" Background="Transparent" BorderThickness="0"
-                  ScrollViewer.CanContentScroll="True" VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
+    <Border DockPanel.Dock="Bottom" Background="{StaticResource SurfaceBrush}" Padding="10" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="0,1,0,0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="260"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Foreground="{StaticResource MutedBrush}"/>
+        <ProgressBar Grid.Column="1" Height="9" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+      </Grid>
+    </Border>
+
+    <Grid Background="{StaticResource BackgroundBrush}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*" MinWidth="560"/>
+        <ColumnDefinition Width="350"/>
+      </Grid.ColumnDefinitions>
+
+      <DockPanel Grid.Column="0" Margin="12,12,8,12" LastChildFill="True">
+        <Button DockPanel.Dock="Bottom" Content="{Binding L.LoadMore}" Command="{Binding LoadMoreCommand}" HorizontalAlignment="Center" Margin="8" MinWidth="170"/>
+        <ListView x:Name="PhotoList" ItemsSource="{Binding Photos}" SelectionMode="Extended"
+                  ScrollViewer.CanContentScroll="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  VirtualizingPanel.IsVirtualizing="True" VirtualizingPanel.VirtualizationMode="Recycling"
                   SelectionChanged="PhotoList_OnSelectionChanged">
-          <ListView.ItemsPanel><ItemsPanelTemplate><VirtualizingStackPanel/></ItemsPanelTemplate></ListView.ItemsPanel>
+          <ListView.ItemsPanel>
+            <ItemsPanelTemplate>
+              <VirtualizingStackPanel/>
+            </ItemsPanelTemplate>
+          </ListView.ItemsPanel>
           <ListView.ItemTemplate>
             <DataTemplate>
-              <Grid Height="116" Margin="4">
-                <Grid.ColumnDefinitions><ColumnDefinition Width="132"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-                <Border Width="116" Height="104" Background="#101216" CornerRadius="6">
-                  <Image Source="{Binding Thumbnail}" Stretch="Uniform"/>
-                </Border>
-                <StackPanel Grid.Column="1" Margin="10,8">
-                  <TextBlock Text="{Binding FileName}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis"/>
-                  <TextBlock Text="{Binding Details}" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0"/>
-                  <TextBlock Text="{Binding Stars}" Foreground="#FFCB45" FontSize="16"/>
-                  <TextBlock Text="{Binding Path}" Foreground="{StaticResource MutedBrush}" TextTrimming="CharacterEllipsis"/>
-                </StackPanel>
-              </Grid>
+              <Border Background="{Binding Background, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                      BorderBrush="{Binding BorderBrush, RelativeSource={RelativeSource AncestorType=ListViewItem}}"
+                      BorderThickness="1" CornerRadius="10" Padding="10" Margin="0,0,0,2">
+                <Grid MinHeight="112">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="136"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Border Width="120" Height="100" Background="#111722" BorderBrush="#303848" BorderThickness="1" CornerRadius="8" HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <Image Source="{Binding Thumbnail}" Stretch="Uniform"/>
+                  </Border>
+                  <StackPanel Grid.Column="1" Margin="12,4,4,4" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding FileName}" FontSize="15" FontWeight="SemiBold" TextTrimming="CharacterEllipsis" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                    <TextBlock Text="{Binding Details}" Foreground="{StaticResource MutedBrush}" Margin="0,7,0,0" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                    <TextBlock Text="{Binding Stars}" Foreground="#FFCB45" FontSize="16" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                    <TextBlock Text="{Binding Path}" Foreground="{StaticResource SubtleBrush}" TextTrimming="CharacterEllipsis" Margin="0,5,0,0" FlowDirection="LeftToRight" TextAlignment="Left"/>
+                  </StackPanel>
+                </Grid>
+              </Border>
             </DataTemplate>
           </ListView.ItemTemplate>
         </ListView>
       </DockPanel>
 
-      <Border Grid.Column="1" Background="{StaticResource SurfaceBrush}" Padding="14" BorderBrush="#343A46" BorderThickness="1,0,0,0">
+      <Border Grid.Column="1" Background="{StaticResource SurfaceBrush}" Padding="16" BorderBrush="{StaticResource StrokeBrush}" BorderThickness="1,0,0,0">
         <ScrollViewer VerticalScrollBarVisibility="Auto">
           <StackPanel>
-            <Border Height="230" Background="#101216" CornerRadius="8" Margin="0,0,0,12">
+            <Border Height="230" Background="#111722" BorderBrush="#303848" BorderThickness="1" CornerRadius="10" Margin="0,0,0,12">
               <Image Source="{Binding SelectedPhoto.Thumbnail}" Stretch="Uniform"/>
             </Border>
-            <TextBlock Text="{Binding SelectedPhoto.FileName}" FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap"/>
-            <TextBlock Text="{Binding SelectedPhoto.Path}" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,14"/>
-            <TextBlock Text="{Binding L.TagInput}" Margin="0,4"/>
+            <TextBlock Text="{Binding SelectedPhoto.FileName}" FontSize="17" FontWeight="SemiBold" TextWrapping="Wrap" FlowDirection="LeftToRight" TextAlignment="Left"/>
+            <TextBlock Text="{Binding SelectedPhoto.Path}" Foreground="{StaticResource MutedBrush}" TextWrapping="Wrap" Margin="0,5,0,14" FlowDirection="LeftToRight" TextAlignment="Left"/>
+            <TextBlock Text="{Binding L.SelectPhoto}" Foreground="{StaticResource SubtleBrush}" TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+            <TextBlock Text="{Binding L.TagInput}" Margin="0,4" Foreground="{StaticResource MutedBrush}"/>
             <TextBox Text="{Binding TagInput, UpdateSourceTrigger=PropertyChanged}"/>
-            <StackPanel Orientation="Horizontal" Margin="0,5">
-              <Button Content="{Binding L.AddTags}" Command="{Binding AddTagsCommand}"/>
-              <Button Content="{Binding L.RemoveTag}" Command="{Binding RemoveTagCommand}"/>
-            </StackPanel>
-            <TextBlock Text="{Binding L.Rating}" Margin="0,9,0,4"/>
+            <WrapPanel Margin="0,7,0,0">
+              <Button Content="{Binding L.AddTags}" Command="{Binding AddTagsCommand}" MinWidth="105"/>
+              <Button Content="{Binding L.RemoveTag}" Command="{Binding RemoveTagCommand}" MinWidth="105"/>
+            </WrapPanel>
+
+            <TextBlock Text="{Binding L.Rating}" Margin="0,12,0,4" Foreground="{StaticResource MutedBrush}"/>
             <ComboBox ItemsSource="{Binding Ratings}" SelectedItem="{Binding SelectedRating}"/>
-            <TextBlock Text="{Binding L.Notes}" Margin="0,12,0,4"/>
-            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="110" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
-            <Button Content="{Binding L.SaveNotes}" Command="{Binding SaveNotesCommand}" Margin="0,7"/>
+
+            <TextBlock Text="{Binding L.Notes}" Margin="0,14,0,4" Foreground="{StaticResource MutedBrush}"/>
+            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" Height="120" AcceptsReturn="True" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto"/>
+            <Button Content="{Binding L.SaveNotes}" Command="{Binding SaveNotesCommand}" Margin="0,9,0,0"/>
           </StackPanel>
         </ScrollViewer>
       </Border>

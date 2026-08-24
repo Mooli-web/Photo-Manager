@@ -1,6 +1,14 @@
 # Changelog
 
-## [2.0.0-beta.2] - Unreleased
+## [2.0.0-beta.3] - Unreleased
+
+### Changed
+- Improved the WPF dark theme contrast so list items, paths, counters and side-panel controls stay readable.
+- Reworked the toolbar and filter row spacing to prevent button text from being clipped or washed out.
+- Made virtualized list items stretch to the full available width and use readable card backgrounds for normal, hover and selected states.
+- Preserved left-to-right rendering for filenames, file sizes and Windows paths inside the Persian interface.
+
+## [2.0.0-beta.2]
 
 ### Fixed
 - Marked the read-only `ProgressValue` WPF binding as explicitly OneWay, preventing an `InvalidOperationException` during window startup.
