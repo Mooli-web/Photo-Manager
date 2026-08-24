@@ -1,0 +1,11 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/PhotoManager.Domain/PhotoManager.Domain.csproj" />
+    <Project Path="src/PhotoManager.Application/PhotoManager.Application.csproj" />
+    <Project Path="src/PhotoManager.Infrastructure/PhotoManager.Infrastructure.csproj" />
+    <Project Path="src/PhotoManager.Wpf/PhotoManager.Wpf.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/PhotoManager.Tests/PhotoManager.Tests.csproj" />
+  </Folder>
+</Solution>

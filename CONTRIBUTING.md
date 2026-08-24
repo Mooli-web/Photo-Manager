@@ -2,16 +2,24 @@
 
 ## English
 
-1. Open an issue describing the bug or proposed behavior.
-2. Create a focused branch and do not commit personal catalogs or photos.
-3. Install `requirements-dev.txt`, run `pytest`, and keep UI text in both `en` and `fa` dictionaries.
-4. Submit a pull request with screenshots for visible UI changes.
+1. Open an issue before a large change.
+2. Never commit personal photos, catalogs, thumbnails, `bin`, `obj`, or release artifacts.
+3. Keep dependency direction documented in `ARCHITECTURE.md`.
+4. File I/O, hashing, metadata and database work must never execute on the WPF dispatcher thread.
+5. Every long operation must accept `CancellationToken`, report progress, isolate per-file errors and have a bounded queue.
+6. Add tests and run:
 
-Use conventional commit prefixes where practical: `feat:`, `fix:`, `docs:`, `test:`, `build:`.
+```powershell
+dotnet test tests/PhotoManager.Tests/PhotoManager.Tests.csproj -c Release
+```
+
+Visible UI text must be provided in Persian and English. Include screenshots and performance observations with UI or scanner pull requests.
 
 ## فارسی
 
-۱. ابتدا Issue بسازید و مشکل یا رفتار پیشنهادی را توضیح دهید.  
-۲. یک Branch مشخص بسازید و عکس یا دیتابیس شخصی را Commit نکنید.  
-۳. وابستگی‌های `requirements-dev.txt` را نصب و `pytest` را اجرا کنید. متن رابط باید هم در فارسی و هم انگلیسی اضافه شود.  
-۴. برای تغییرات ظاهری، تصویر رابط را به Pull Request اضافه کنید.
+۱. پیش از تغییر بزرگ یک Issue بسازید.  
+۲. عکس، کاتالوگ، Thumbnail، پوشه‌های `bin` و `obj` یا خروجی Release را Commit نکنید.  
+۳. جهت وابستگی‌های `ARCHITECTURE.md` را حفظ کنید.  
+۴. فایل، هش، Metadata و دیتابیس نباید روی Thread رابط WPF اجرا شوند.  
+۵. عملیات طولانی باید توقف‌پذیر، دارای پیشرفت، صف محدود و مدیریت مستقل خطای هر فایل باشد.  
+۶. تست اضافه کنید و دستور بالا را اجرا کنید. متن قابل‌مشاهده باید فارسی و انگلیسی داشته باشد.

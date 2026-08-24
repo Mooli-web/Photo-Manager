@@ -1,113 +1,98 @@
 <div align="center">
   <img src="assets/icon.png" width="110" alt="Photo Manager icon">
-  <h1>Photo Manager</h1>
-  <p>A private, offline, bilingual and non-destructive photo archive for Windows.</p>
+  <h1>Photo Manager 2</h1>
+  <p>Fast, private, bilingual photo catalog for Windows — rebuilt with C#/.NET 10 and WPF.</p>
   <p><a href="README.fa.md">فارسی</a> · English</p>
 </div>
 
-> **Status:** v1.0 beta. Keep an independent backup of important photographs. The application never edits image contents, but Move mode intentionally moves files after confirmation.
+> **v2 is a pre-release migration.** The Python v1 release remains available, but is not recommended for large folders. Never keep your only copy of important photographs in any catalog application.
 
-## Features
+## Why v2?
 
-- Recursive folder scanning with a persistent SQLite catalog
-- Grid thumbnails and large preview
-- Persian (RTL) and English interfaces
-- Add files by **reference**, **copy**, or **move**
-- Date-based archive layout (`year/year-month-day`)
-- SHA-256 duplicate detection, independent of filename
-- Multi-photo tagging, tag removal and partial tag search
-- Filename, path and notes search
-- 0–5 star rating and rating filter
-- EXIF date, camera, lens, dimensions and file size
-- Missing-file detection and catalog backup
-- Light and dark themes
-- Offline operation; no account, cloud or telemetry
-- Windows x64 installer and portable executable through GitHub Releases
+The prototype performed disk scanning, full SHA-256 hashing, metadata extraction, database writes and thumbnail generation on the UI thread. Large folders could make Windows report the application as unresponsive. v2 replaces that execution model rather than patching it.
 
-## Install on Windows
+## Architecture
 
-Open the repository's **Releases** page and download:
+- **C# / .NET 10 LTS / WPF / MVVM**
+- Domain, Application, Infrastructure and Presentation projects
+- Bounded asynchronous channels for scanning; 2–6 metadata workers
+- UI thread never performs folder enumeration, hashing or metadata extraction
+- Fast first/last-block fingerprint; full SHA-256 only for duplicate candidates
+- SQLite WAL catalog and writes in batches of 100
+- Paged queries (200 records) and recycled/virtualized WPF list items
+- Lazy thumbnail queue limited to four concurrent decoders
+- Search debounce, progress reporting and real cancellation
+- Per-file error isolation and a scan error log
+- Original photographs are never modified by catalog scanning
 
-- `PhotoManager-Setup-1.0.0-x64.exe` for normal installation; or
-- the `windows-x64.zip` portable build.
+See [ARCHITECTURE.md](ARCHITECTURE.md) for boundaries and safety rules.
 
-Windows SmartScreen may warn about an unsigned community build. Verify the SHA-256 checksum published with the release, then choose *More info → Run anyway* only if it matches. The project currently has no commercial code-signing certificate.
+## No runtime installation required
 
-## Run from source
+Release builds are **self-contained and single-file**. Users do not install .NET, Python, SQLite or any package. NuGet/native components are bundled in the application output.
 
-Requires Python 3.11+.
+Supported downloads:
 
-```powershell
-python -m venv .venv
-.venv\Scripts\activate
-pip install -r requirements.txt
-python -m photomanager
-```
+| Device | Download |
+|---|---|
+| Most Windows 10/11 PCs | `PhotoManager-Setup-2.0.0-win-x64.exe` |
+| Portable x64 | `PhotoManager-2.0.0-win-x64-portable.zip` |
+| Windows on ARM | `PhotoManager-2.0.0-win-arm64-portable.zip` |
 
-Linux/macOS developers can use their platform's activation command. Windows is the supported release target.
+WPF is Windows-only. These builds do not run on macOS or Linux. “No dependencies” means no separate runtime installation, not one binary that supports every operating system and processor.
 
-## Quick start
+## Current v2 features
 
-1. Select **Add folder** to catalog images without moving them.
-2. Select **Import** to reference, copy, or move a complete folder.
-3. Select one or multiple thumbnails and add comma-separated tags.
-4. Search names/paths/notes, filter tags, or choose a minimum rating.
-5. Use **Backup catalog** regularly. This backs up metadata, not original photos.
+- Responsive recursive scan with live counters, progress and Cancel
+- Restart-safe SQLite catalog keyed by full file path
+- JPG/PNG/WebP/BMP/GIF/TIFF plus cataloging of common HEIC/RAW extensions
+- EXIF date, dimensions, camera and lens when metadata is readable
+- Filename/path/notes search and tag filter
+- Multi-selection tags, notes and 0–5 rating
+- Missing-file check and consistent SQLite backup
+- Persian RTL and English interface
+- Self-contained x64 installer; portable x64 and ARM64 builds
 
-### Import safety
+Copy/move import is deliberately disabled during the migration. v2 first establishes a safe, non-destructive reference catalog. Transactional import will return only after journaling, copy verification and recovery are implemented.
 
-| Mode | Original file | Archive copy |
-|---|---|---|
-| Reference | Remains in place | None |
-| Copy | Remains in place | Created and organized by date |
-| Move | Moved from source | Created and organized by date |
+## Build and test
 
-Duplicate content is skipped using SHA-256. Existing destination files are never overwritten; a numeric suffix is added instead. Tags and ratings are stored in the local catalog and do not alter image metadata.
-
-## Supported formats
-
-Full preview and metadata depend on Pillow/Qt decoders. JPG, JPEG, PNG, WebP, BMP, GIF and TIFF are supported by default. HEIC and camera RAW extensions are cataloged, but preview/EXIF support can vary by Windows codec and camera format.
-
-## Data location
-
-The catalog and thumbnail cache use Qt's per-user application data folder, normally:
-
-```text
-%LOCALAPPDATA%\Mooli-web\Photo Manager\
-```
-
-Uninstalling the application does not delete original photographs. Export a catalog backup before resetting app data.
-
-## Build an EXE locally
+Install the .NET 10 SDK only for development:
 
 ```powershell
-pip install -r requirements-dev.txt
-pytest
-pyinstaller --noconfirm PhotoManager.spec
-iscc installer.iss
+dotnet test tests/PhotoManager.Tests/PhotoManager.Tests.csproj -c Release
+./scripts/publish.ps1
 ```
 
-The executable appears in `dist`; the installer appears in `installer-output`. Pushing a tag such as `v1.0.0` runs the release workflow and attaches both downloads to a GitHub Release.
+The publish script creates self-contained artifacts under `artifacts/`. Inno Setup 6 is needed only to build the installer:
 
-## Repository structure
+```powershell
+& "${env:ProgramFiles(x86)}\Inno Setup 6\ISCC.exe" installer-x64.iss
+```
+
+End users need none of these tools.
+
+## Publish a GitHub pre-release
+
+After tests pass on `main`:
+
+```bash
+git tag v2.0.0-beta.1
+git push origin v2.0.0-beta.1
+```
+
+The release workflow tests, publishes x64/ARM64 self-contained executables, builds the x64 installer, calculates SHA-256 checksums, and creates a GitHub pre-release.
+
+## Data and privacy
+
+The application is offline and has no account, telemetry or cloud API. Data is stored under:
 
 ```text
-photomanager/       application, catalog, scanner, importer and UI
-assets/             icon files
- tests/             database, scanner and import tests
-.github/workflows/  CI tests and Windows release build
-PhotoManager.spec   PyInstaller configuration
-installer.iss       Inno Setup installer
+%LOCALAPPDATA%\Mooli-web\PhotoManager\
 ```
 
-## Privacy and limitations
-
-The program makes no network requests. Face recognition, AI tagging, map view, cloud sync and image editing are intentionally outside v1.0. Albums and advanced AND/OR filters are planned. See [ROADMAP.md](ROADMAP.md).
-
-## Contributing
-
-See [CONTRIBUTING.md](CONTRIBUTING.md). Please open an issue before a large change. Never include personal photos or catalogs in bug reports.
+The v2 catalog is separate from v1. Scanning only reads photos. Tags, ratings and notes stay in SQLite and do not alter original files.
 
 ## License
 
-MIT © 2026 Mooli-web. See [LICENSE](LICENSE).
+MIT © 2026 Mooli-web.

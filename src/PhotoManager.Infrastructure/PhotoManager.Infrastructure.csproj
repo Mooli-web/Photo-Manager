@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../PhotoManager.Application/PhotoManager.Application.csproj" />
+    <ProjectReference Include="../PhotoManager.Domain/PhotoManager.Domain.csproj" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="10.0.0" />
+    <!-- Explicitly pin the native SQLite bundle above the CVE-2025-6965 affected range. -->
+    <PackageReference Include="SQLitePCLRaw.lib.e_sqlite3" Version="3.53.3" />
+    <PackageReference Include="MetadataExtractor" Version="2.9.0" />
+  </ItemGroup>
+</Project>

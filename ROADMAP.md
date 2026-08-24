@@ -1,22 +1,22 @@
 # Roadmap / نقشه راه
 
-## v1.1
-- Background import with progress and cancellation
-- Virtual albums and saved searches
-- Tag rename, merge, colors and hierarchical tags
-- Relink moved folders and files
-- Advanced AND/OR/NOT filters
+## v2.0 stable
+- Stress tests with 10k, 100k and corrupt/multi-gigabyte image fixtures
+- Scan pause/resume and crash-resume checkpoint
+- Thumbnail viewport prioritization
+- Signed installer when a trusted code-signing certificate is available
 
-## v1.2
-- Better HEIC and camera RAW preview support
-- Optional XMP sidecar import/export
-- Timeline and calendar view
-- Duplicate review screen
+## v2.1
+- Transactional Copy import: journal → copy → SHA-256 verify → catalog commit
+- Recover interrupted imports
+- Duplicate review rather than silent duplicate skipping
+- Tag rename/merge and saved AND/OR/NOT filters
 
-## Later / آینده
-- Optional local AI tagging and face grouping
-- GPS map view
-- Plugin API
-- Optional encrypted synchronization (never mandatory)
+## v2.2
+- Virtual albums and timeline
+- Better HEIC and RAW previews via optional bundled codecs
+- XMP sidecar import/export
 
-Priorities may change based on issues and real-world testing. / اولویت‌ها بر اساس بازخورد و تست واقعی تغییر می‌کنند.
+## Later
+- Optional, fully local AI tagging and face grouping
+- GPS map view and plugin API

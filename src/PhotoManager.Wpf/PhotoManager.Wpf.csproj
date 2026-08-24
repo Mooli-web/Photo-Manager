@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows10.0.17763.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>../../assets/icon.ico</ApplicationIcon>
+    <AssemblyName>PhotoManager</AssemblyName>
+    <RootNamespace>PhotoManager.Wpf</RootNamespace>
+    <Version>2.0.0</Version>
+    <!-- CI publish explicitly sets SelfContained=true for each Windows runtime. -->
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+    <DebugType>embedded</DebugType>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../PhotoManager.Application/PhotoManager.Application.csproj" />
+    <ProjectReference Include="../PhotoManager.Infrastructure/PhotoManager.Infrastructure.csproj" />
+    <ProjectReference Include="../PhotoManager.Domain/PhotoManager.Domain.csproj" />
+    <Resource Include="../../assets/icon.ico" Link="Resources/icon.ico" />
+  </ItemGroup>
+</Project>
