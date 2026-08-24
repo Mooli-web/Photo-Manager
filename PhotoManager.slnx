@@ -7,5 +7,6 @@
   </Folder>
   <Folder Name="/tests/">
     <Project Path="tests/PhotoManager.Tests/PhotoManager.Tests.csproj" />
+    <Project Path="tests/PhotoManager.Wpf.Smoke/PhotoManager.Wpf.Smoke.csproj" />
   </Folder>
 </Solution>

@@ -15,8 +15,10 @@ jobs:
           dotnet-version: "10.0.x"
           cache: true
           cache-dependency-path: "**/*.csproj"
-      - name: Test
+      - name: Test core and infrastructure
         run: dotnet test tests/PhotoManager.Tests/PhotoManager.Tests.csproj -c Release
+      - name: Test WPF startup and bindings
+        run: dotnet run --project tests/PhotoManager.Wpf.Smoke/PhotoManager.Wpf.Smoke.csproj -c Release
       - name: Publish self-contained executables
         shell: pwsh
         run: ./scripts/publish.ps1

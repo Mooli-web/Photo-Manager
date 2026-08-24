@@ -1,6 +1,12 @@
 # Changelog
 
-## [2.0.0-beta.1] - Unreleased
+## [2.0.0-beta.2] - Unreleased
+
+### Fixed
+- Marked the read-only `ProgressValue` WPF binding as explicitly OneWay, preventing an `InvalidOperationException` during window startup.
+- Added a Windows WPF startup/binding smoke test to both CI and the release gate.
+
+## [2.0.0-beta.1]
 
 ### Changed
 - Replaced the Python/PyQt prototype with C#/.NET 10/WPF and MVVM boundaries.

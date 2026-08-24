@@ -28,7 +28,7 @@
       <Grid>
         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="220"/></Grid.ColumnDefinitions>
         <TextBlock Text="{Binding Status}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"/>
-        <ProgressBar Grid.Column="1" Height="7" Maximum="100" Value="{Binding ProgressValue}" VerticalAlignment="Center"/>
+        <ProgressBar Grid.Column="1" Height="7" Maximum="100" Value="{Binding ProgressValue, Mode=OneWay}" VerticalAlignment="Center"/>
       </Grid>
     </Border>
 
